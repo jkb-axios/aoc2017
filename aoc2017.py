@@ -3,6 +3,8 @@
 import os, sys, math
 from pprint import pprint as pp
 
+RUN_LIST = []
+
 def day1a():
   with open('day1input.txt') as f:
     num = f.read().strip()
@@ -113,7 +115,6 @@ def day3b():
       m[x][y] = val
       if m[x+1][y] == 0:
         direction = (direction+1)%4
-
   return val
 
 def day4a():
@@ -145,16 +146,87 @@ def day4b():
   return cnt
 
 def day5a():
-  pass
+  jumps = []
+  with open('day5input.txt') as f:
+    jumps = [int(x) for x in f.read().strip().split()]
+  pos = 0
+  cnt = 0
+  while pos >= 0 and pos < len(jumps):
+    next_pos = pos + jumps[pos]
+    jumps[pos] += 1
+    pos = next_pos
+    cnt+=1
+  return cnt
 
 def day5b():
-  pass
+  jumps = []
+  with open('day5input.txt') as f:
+    jumps = [int(x) for x in f.read().strip().split()]
+  pos = 0
+  cnt = 0
+  while pos >= 0 and pos < len(jumps):
+    next_pos = pos + jumps[pos]
+    if jumps[pos] >= 3:
+      jumps[pos] -= 1
+    else:
+      jumps[pos] += 1
+    pos = next_pos
+    cnt+=1
+  return cnt
 
+RUN_LIST.append(6)
 def day6a():
-  pass
+  def redis(banks):
+    num_blocks = max(banks)
+    bank_idx = banks.index(num_blocks)
+    banks[bank_idx] = 0
+    num_banks = len(banks)
+    num_for_all = num_blocks/num_banks
+    num_extra = num_blocks%num_banks
+    extra = 1
+    for i in xrange(num_banks):
+      if num_extra <= 0:
+        extra = 0
+      else:
+        num_extra -= 1
+      banks[(i+bank_idx+1)%num_banks] += num_for_all + extra
+    return ','.join(str(x) for x in banks)
+  banks = []
+  with open('day6input.txt') as f:
+    banks = [int(x) for x in f.read().strip().split()]
+  states = []
+  state = ','.join(str(x) for x in banks)
+  while state not in states:
+    states.append(state)
+    state = redis(banks)
+  return len(states)
 
 def day6b():
-  pass
+  def redis(banks):
+    num_blocks = max(banks)
+    bank_idx = banks.index(num_blocks)
+    banks[bank_idx] = 0
+    num_banks = len(banks)
+    num_for_all = num_blocks/num_banks
+    num_extra = num_blocks%num_banks
+    extra = 1
+    for i in xrange(num_banks):
+      if num_extra <= 0:
+        extra = 0
+      else:
+        num_extra -= 1
+      banks[(i+bank_idx+1)%num_banks] += num_for_all + extra
+    return ','.join(str(x) for x in banks)
+  banks = []
+  with open('day6input.txt') as f:
+    banks = [int(x) for x in f.read().strip().split()]
+  states = []
+  state = ','.join(str(x) for x in banks)
+  while state not in states:
+    states.append(state)
+    state = redis(banks)
+  first_idx = states.index(state)
+  return len(states)-first_idx
 
 def day7a():
   pass
@@ -271,7 +343,8 @@ def day25b():
   pass
 
 if __name__ == '__main__':
-  run = []
+  run = RUN_LIST
+  #run = []
   #run = [1,2,3,4]
   #run = [5]
   if not run or 1 in run: print 'Day 1  Part 1:', day1a()
