@@ -174,7 +174,6 @@ def day5b():
     cnt+=1
   return cnt
 
-RUN_LIST.append(6)
 def day6a():
   def redis(banks):
     num_blocks = max(banks)
@@ -229,16 +228,110 @@ def day6b():
   return len(states)-first_idx
 
 def day7a():
-  pass
+  class Node(object):
+    name = None
+    children = []
+    weight = 0
+    def __init__(self, _name, _weight, _children=None):
+      self.name = _name
+      self.weight = _weight
+      if _children:
+        self.children = _children
+    def __str__(self):
+      return '%s (%s): %s'%(self.name, self.weight, self.children)
+
+  progs = {}    # k=prog name; val=prog
+  parents = {}  # k=prog name; val=list of children; everyone is in here
+  children = {} # k=child prog name; val=parent; only children are in here
+  with open('day7input.txt') as f:
+    for l in f:
+      tmp = l.split()
+      if len(tmp) == 2:
+        prog = Node(tmp[0], int(tmp[1].strip('()')))
+      elif len(tmp) > 3:
+        prog = Node(tmp[0], int(tmp[1].strip('()')), [x.strip(',') for x in tmp[3:] ])
+      progs[prog.name] = prog
+      parents[prog.name] = prog.children
+      for child in prog.children:
+        children[child] = prog.name
+  #print len(progs), len(parents), len(children)
+  head = list(set(parents.keys())-set(children.keys()))
+  return head[0]
 
 def day7b():
-  pass
+  class Node(object):
+    name = None
+    children = []
+    weight = 0
+    def __init__(self, _name, _weight, _children=None):
+      self.name = _name
+      self.weight = _weight
+      if _children:
+        self.children = _children
+    def __str__(self):
+      return '%s (%s): %s'%(self.name, self.weight, self.children)
+
+  progs = {}    # k=prog name; val=prog
+  parents = {}  # k=prog name; val=list of children; everyone is in here
+  children = {} # k=child prog name; val=parent; only children are in here
+  with open('day7input.txt') as f:
+    for l in f:
+      tmp = l.split()
+      if len(tmp) == 2:
+        prog = Node(tmp[0], int(tmp[1].strip('()')))
+      elif len(tmp) > 3:
+        prog = Node(tmp[0], int(tmp[1].strip('()')), [x.strip(',') for x in tmp[3:] ])
+      progs[prog.name] = prog
+      parents[prog.name] = prog.children
+      for child in prog.children:
+        children[child] = prog.name
+  head = list(set(parents.keys())-set(children.keys()))[0]
+  # now find unbalanced disc
+  # depth first search
+  def find_unbalanced(node_name):
+    node = progs[node_name]
+    weight = node.weight
+    # case 1: no children (balanced, and weight = weight of node)
+    if len(node.children) == 0:
+      return (True, weight)
+    # case 2: has children
+    child_weights = []
+    for child in node.children:
+      balanced, child_weight = find_unbalanced(child)
+      # case 2a: has unbalanced child (unbalanced, and weight = new weight of the unbalanced node)
+      if not balanced:
+        return (False, child_weight)
+      child_weights.append(child_weight)
+    # case 2b: is unbalanced (unbalanced, and weight = new weight required to balance)
+    if len(set(child_weights)) != 1:
+      # unbalanced
+      # which one is different?
+      # evaluate that child, determine new weight of child
+      correct_w = incorrect_w = None
+      for w in set(child_weights):
+        if child_weights.count(w) == 1:
+          incorrect_w = w
+        else:
+          correct_w = w
+      weight_difference = correct_w - incorrect_w
+      child_num = child_weights.index(incorrect_w)
+      child_name = node.children[child_num]
+      child_weight = progs[child_name].weight
+      new_weight = child_weight + weight_difference
+      return (False, new_weight)
+    else: # case 2c: is balanced (balanced, and weight = total weight of node and children)
+      # balanced
+      return (True, weight + sum(child_weights))
+  res, weight = find_unbalanced(head)
+  #print res
+  return weight
 
 def day8a():
   pass
 
 def day8b():
   pass
+#RUN_LIST.append(8)
 
 def day9a():
   pass
