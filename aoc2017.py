@@ -327,17 +327,57 @@ def day7b():
   return weight
 
 def day8a():
-  pass
+  def condition(a, op, b):
+    return eval('%s%s%s'%(a,op,b))
+  def operation(a, op, b):
+    if op == 'inc':
+      return a + b
+    return a - b
+  regs = {}
+  with open('day8input.txt') as f:
+    for l in f:
+      cmd = l.split()
+      if len(cmd) != 7:
+        print 'incomplete command:',l,cmd
+      # cmd = 0:target reg, 1:op, 2:op num, 3:'if', 4:conditional reg, 5:comparison op, 6:comparison num
+      if cmd[0] not in regs:
+        regs[cmd[0]] = 0
+      if cmd[4] not in regs:
+        regs[cmd[4]] = 0
+      if condition(regs[cmd[4]], cmd[5], int(cmd[6])):
+        regs[cmd[0]] = operation(regs[cmd[0]], cmd[1], int(cmd[2]))
+  return max(regs.values())
 
 def day8b():
-  pass
-#RUN_LIST.append(8)
+  def condition(a, op, b):
+    return eval('%s%s%s'%(a,op,b))
+  def operation(a, op, b):
+    if op == 'inc':
+      return a + b
+    return a - b
+  max_val = 0
+  regs = {}
+  with open('day8input.txt') as f:
+    for l in f:
+      cmd = l.split()
+      if len(cmd) != 7:
+        print 'incomplete command:',l,cmd
+      # cmd = 0:target reg, 1:op, 2:op num, 3:'if', 4:conditional reg, 5:comparison op, 6:comparison num
+      if cmd[0] not in regs:
+        regs[cmd[0]] = 0
+      if cmd[4] not in regs:
+        regs[cmd[4]] = 0
+      if condition(regs[cmd[4]], cmd[5], int(cmd[6])):
+        regs[cmd[0]] = operation(regs[cmd[0]], cmd[1], int(cmd[2]))
+        max_val = max(max_val,regs[cmd[0]])
+  return max_val
 
 def day9a():
   pass
 
 def day9b():
   pass
+RUN_LIST.append(9)
 
 def day10a():
   pass
