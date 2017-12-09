@@ -373,10 +373,58 @@ def day8b():
   return max_val
 
 def day9a():
-  pass
+  import re
+  in9 = ''
+  with open('day9input.txt') as f:
+    in9 = f.read()
+
+  # remove cancelled characters
+  in9 = re.sub(r'!.', '', in9)
+
+  # remove garbage
+  in9 = re.sub(r'<.*?>', '', in9)
+
+  # calculate score
+  value = 1
+  score = 0
+  for x in in9:
+    if x == '{':
+      score += value
+      value += 1
+    elif x == '}':
+      value -= 1
+    elif x == ',':
+      pass
+    else:
+      print 'Why is this character in here:',x
+
+  return score
 
 def day9b():
-  pass
+  import re
+  in9 = ''
+  with open('day9input.txt') as f:
+    in9 = f.read()
+
+  # remove cancelled characters
+  in9 = re.sub(r'!.', '', in9)
+  len_wo_cancelled = len(in9)
+
+  # make sure key is unique
+  key = 'kippik'
+  while in9.count(key) !=0:
+    key = 'a'+key+'a'
+
+  # replace garbage with key
+  in9 = re.sub(r'<.*?>', key, in9)
+  cnt_of_key = in9.count(key)
+
+  # remove keys now
+  in9 = re.sub(key, '', in9)
+  len_wo_garbage = len(in9)
+
+  cnt = len_wo_cancelled - len_wo_garbage - 2*cnt_of_key
+  return cnt
 RUN_LIST.append(9)
 
 def day10a():
